@@ -6,12 +6,20 @@
 
 #include <cstdio>
 #include <cstring>
-#include <strings.h>
 #include <string>
 #include <vector>
 #include <algorithm>
 
 #include "CDAccess_CHD.h"
+
+static bool icontains(const char* haystack, const char* needle)
+{
+  if (!haystack || !needle) return false;
+  std::string h(haystack), n(needle);
+  std::transform(h.begin(), h.end(), h.begin(), ::tolower);
+  std::transform(n.begin(), n.end(), n.begin(), ::tolower);
+  return h.find(n) != std::string::npos;
+}
 
 namespace Mednafen {
 
@@ -271,7 +279,7 @@ void CDAccess_CHD::parse_toc_from_metadata()
     track_map[trackno].postgap = postgap;
     // Default: no swap; enable only if subtype hints MSB/BE explicitly.
     bool is_audio = (strcasecmp(type, "AUDIO") == 0);
-    bool msb_hint = (strcasestr(subtype, "MSB") != nullptr) || (strcasestr(subtype, "BE") != nullptr);
+    bool msb_hint = (icontains(subtype, "MSB")) || (icontains(subtype, "BE"));
     track_map[trackno].audio_msb_first = (is_audio && msb_hint);
     track_map[trackno].di_format = (is_audio ? 0 : 1);
 
@@ -280,7 +288,7 @@ void CDAccess_CHD::parse_toc_from_metadata()
     toc.tracks[trackno].control = ctrl;
     toc.tracks[trackno].valid = true;
 
-    if (strcasestr(type, "MODE2") != nullptr)
+    if (icontains(type, "MODE2"))
       any_mode2 = true;
 
     min_track = std::min(min_track, trackno);
