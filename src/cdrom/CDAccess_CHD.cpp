@@ -280,7 +280,7 @@ void CDAccess_CHD::parse_toc_from_metadata()
     // Default: no swap; enable only if subtype hints MSB/BE explicitly.
     bool is_audio = (strcasecmp(type, "AUDIO") == 0);
     bool msb_hint = (icontains(subtype, "MSB")) || (icontains(subtype, "BE"));
-    track_map[trackno].audio_msb_first = (is_audio && msb_hint);
+    track_map[trackno].audio_msb_first = is_audio;
     track_map[trackno].di_format = (is_audio ? 0 : 1);
 
     toc.tracks[trackno].lba = plba;
